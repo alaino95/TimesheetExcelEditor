@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name='TimesheetExcelEditor',
-    version='1.0.0',
+    version='1.0.1',
     description='An application for modify excel timesheet',
     long_description=README,
     long_description_content_type="text/markdown",

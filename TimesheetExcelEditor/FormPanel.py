@@ -1,5 +1,5 @@
 import wx
-import config
+from . import config
 
 
 class FormPanel(wx.Panel):

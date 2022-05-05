@@ -1,5 +1,6 @@
 import openpyxl
 import re
+import os
 from datetime import date as dt, timedelta
 
 
@@ -7,7 +8,7 @@ class Excel:
 
     def __init__(self, directory, name):
         self.filename = name
-        self.filePath = '\\'.join((directory, name))
+        self.filePath = os.path.join(directory, name)
         self.wb = openpyxl.load_workbook(self.filePath)
         self.headers = {}
 

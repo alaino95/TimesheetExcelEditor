@@ -1,6 +1,6 @@
 import wx
 import re
-import config
+from . import config
 
 
 class ListPanel(wx.Panel):
@@ -13,7 +13,6 @@ class ListPanel(wx.Panel):
         listlabel = wx.StaticText(self, label="Elenco")
         hbox.Add(listlabel, proportion=0, flag=wx.ALIGN_LEFT | wx.ALL, border=10)
         self.elenco = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.SUNKEN_BORDER)
-        self.elenco.SetHint("gg/mm/aaaa nore")
         hbox.Add(self.elenco, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
         config.listModifyButton = wx.Button(self, label='Modifica')
         config.listModifyButton.Bind(wx.EVT_BUTTON, self.__list_modify_button_press)

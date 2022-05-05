@@ -1,5 +1,5 @@
 import wx
-import config
+from . import config
 from TimesheetExcelEditor.ListPanel import ListPanel
 from TimesheetExcelEditor.FormPanel import FormPanel
 from TimesheetExcelEditor.CalendarPanel import CalendarPanel

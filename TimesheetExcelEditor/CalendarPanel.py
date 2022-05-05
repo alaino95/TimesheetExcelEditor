@@ -6,7 +6,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import dateutil.rrule as rrule
 from urllib.request import Request, urlopen
-import config
+from . import config
 
 
 class CalendarPanel(wx.Panel):
@@ -55,7 +55,7 @@ class CalendarPanel(wx.Panel):
         eventhbox.Add(self.eventList, proportion=1, flag=wx.EXPAND | wx.LEFT | wx.RIGHT, border=10)
 
         vbox.Add(eventhbox, proportion=0, flag=wx.EXPAND | wx.ALL, border=10)
-        leftpanel.SetSizer(vbox)
+        leftpanel.SetSizer(vbox, wx.EXPAND)
         svbox.Add(leftpanel, 1, wx.EXPAND)
 
         rightpanel = wx.Panel(self)
@@ -76,16 +76,16 @@ class CalendarPanel(wx.Panel):
         self.saveButton.Bind(wx.EVT_BUTTON, self.__save_button_press)
         self.saveButton.Disable()
         buttonbox.Add(self.saveButton, proportion=0, flag=wx.TOP | wx.BOTTOM, border=10)
-        self.selectall = wx.Button(rightpanel, label="Seleziona Tutti", size=(90, 25))
+        self.selectall = wx.Button(rightpanel, label="Seleziona Tutti")
         self.selectall.Bind(wx.EVT_BUTTON, self.__checkAll)
         self.selectall.Disable()
-        buttonbox.Add(self.selectall, proportion=0, flag=wx.TOP | wx.BOTTOM | wx.RIGHT, border=10)
-        self.deselectall = wx.Button(rightpanel, label="Deseleziona Tutti", size=(100, 25))
+        buttonbox.Add(self.selectall, proportion=0, flag=wx.TOP | wx.BOTTOM, border=10)
+        self.deselectall = wx.Button(rightpanel, label="Deseleziona Tutti")
         self.deselectall.Bind(wx.EVT_BUTTON, self.__uncheckAll)
         self.deselectall.Disable()
         buttonbox.Add(self.deselectall, proportion=0, flag=wx.TOP | wx.BOTTOM, border=10)
 
-        rightpanel.SetSizer(buttonbox)
+        rightpanel.SetSizer(buttonbox, wx.EXPAND)
         svbox.Add(rightpanel, 0, wx.EXPAND)
 
         self.SetSizer(svbox)
@@ -172,7 +172,7 @@ class CalendarPanel(wx.Panel):
             while itemsnum >= 0:
                 eliminate = False
                 if name is not None:
-                    if self.eventList.GetItemText(itemsnum, 0) != name:
+                    if re.search(name, self.eventList.GetItemText(itemsnum, 0), re.IGNORECASE) is None:
                         eliminate = True
                 if datemin is not None:
                     listdate = datetime.strptime(self.eventList.GetItemText(itemsnum, 1), "%d/%m/%Y")
