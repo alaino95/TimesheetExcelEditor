@@ -3,11 +3,13 @@ from datetime import datetime
 
 
 file = None
+log = None
 acSelect = None
 multiplier = None
-formModifyButton = None
-listModifyButton = None
 calModifyButton = None
+listModifyButton = None
+formModifyButton = None
+rangeModifyButton = None
 
 
 def checkDate(date):

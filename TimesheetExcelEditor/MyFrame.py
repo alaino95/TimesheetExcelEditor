@@ -5,12 +5,12 @@ from TimesheetExcelEditor.MyPanel import MyPanel
 class MyFrame(wx.Frame):
 
     def __init__(self):
-        super().__init__(None, title="Editor", size=(640, 480),
+        super().__init__(None, title="Timesheet Excel Editor", size=(800, 600),
                          style=wx.DEFAULT_FRAME_STYLE ^ wx.RESIZE_BORDER)
         self.CenterOnScreen()
         self.EnableMaximizeButton(False)
-        self.panel = MyPanel(self)
-        super().Show()
+        panel = MyPanel(self)
+        self.Show()
 
 
 def main():

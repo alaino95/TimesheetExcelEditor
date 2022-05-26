@@ -26,7 +26,7 @@ class ListPanel(wx.Panel):
 
         self.SetSizer(vbox)
 
-    def __checkElenco(self):
+    def __checkList(self):
         num = self.elenco.GetNumberOfLines()
         for i in range(num):
             line = self.elenco.GetLineText(i)
@@ -40,7 +40,7 @@ class ListPanel(wx.Panel):
     def __list_modify_button_press(self, event):
         activity = config.acSelect.GetStringSelection()
         multiplier = config.multiplier.GetStringSelection()
-        if not self.elenco.IsEmpty() and self.__checkElenco():
+        if not self.elenco.IsEmpty() and self.__checkList():
             num = self.elenco.GetNumberOfLines()
             for i in range(num):
                 line = self.elenco.GetLineText(i)
@@ -50,6 +50,9 @@ class ListPanel(wx.Panel):
                                         style=wx.OK, pos=wx.DefaultPosition)
             if modified.ShowModal() == wx.OK:
                 return
+            if config.file.checkMissing():
+                message = config.file.getMissing()
+                config.log.AppendText(message+"\n")
             self.saveButton.Enable()
         else:
             missList = wx.MessageDialog(None, "Inserire elenco formato:data nOre", caption="Errore",

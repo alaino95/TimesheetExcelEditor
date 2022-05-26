@@ -5,7 +5,6 @@ from . import config
 class FormPanel(wx.Panel):
 
     def __init__(self, parent):
-        # self.myPanel = MyPanel(parent)
         wx.Panel.__init__(self, parent)
         vbox = wx.BoxSizer(wx.VERTICAL)
 
@@ -18,6 +17,7 @@ class FormPanel(wx.Panel):
         nol = wx.StaticText(self, label="Numero ore")
         hbox.Add(nol, proportion=0, flag=wx.ALL, border=10)
         self.numOre = wx.TextCtrl(self)
+        self.numOre.Bind(wx.EVT_CHAR, self.__handle_keypress)
         hbox.Add(self.numOre, proportion=1, flag=wx.ALL, border=10)
         config.formModifyButton = wx.Button(self, label='Modifica')
         config.formModifyButton.Bind(wx.EVT_BUTTON, self.__form_modify_button_press)
@@ -31,9 +31,17 @@ class FormPanel(wx.Panel):
         vbox.Add(hbox, proportion=1, flag=wx.EXPAND | wx.ALL, border=10)
         self.SetSizer(vbox)
 
+    def __handle_keypress(self, event):
+        keycode = event.GetKeyCode()
+        if keycode < 255:
+            # valid ASCII
+            if chr(keycode).isnumeric() or keycode == 8:
+                # Valid numeric character
+                event.Skip()
+
     def __form_modify_button_press(self, event):
         if not self.data.IsEmpty() and config.checkDate(self.data.GetValue()):
-            if not self.numOre.IsEmpty() and self.numOre.GetValue().isnumeric():
+            if not self.numOre.IsEmpty():
                 multiplier = config.multiplier.GetStringSelection()
                 activity = config.acSelect.GetStringSelection()
                 config.file.modify(activity, self.data.GetValue(), int(self.numOre.GetValue()), float(multiplier))
@@ -42,6 +50,9 @@ class FormPanel(wx.Panel):
                 if modified.ShowModal() == wx.OK:
                     return
                 self.saveButton.Enable()
+                if config.file.checkMissing():
+                    message = config.file.getMissing()
+                    config.log.AppendText(message+"\n")
             else:
                 missHours = wx.MessageDialog(None, "Inserire un numero di ore", caption="Errore",
                                              style=wx.OK, pos=wx.DefaultPosition)
