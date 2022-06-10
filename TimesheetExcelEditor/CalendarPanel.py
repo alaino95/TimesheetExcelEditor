@@ -2,6 +2,7 @@ import wx
 import re
 import validators
 from icalendar import Calendar
+from icalendar.prop import vDDDTypes
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import dateutil.rrule as rrule
@@ -111,6 +112,11 @@ class CalendarPanel(wx.Panel):
             if not self.eventList.IsEmpty():
                 self.eventList.DeleteAllItems()
             for event in self.cal.walk('vevent'):
+                evNameS = str(event.get('summary'))
+                start_dateS = event.get('dtstart').dt.strftime("%d/%m/%Y")
+                start_hourS = event.get('dtstart').dt.strftime("%H:%M")
+                deltaS = relativedelta(event.get('dtend').dt, event.get('dtstart').dt)
+                key_events[event.get('dtstart').dt] = (evNameS, start_dateS, start_hourS, str(deltaS.hours))
                 if event.get('rrule') is not None:
                     evName = str(event.get('summary'))
                     start_date = event.get('dtstart').dt.strftime("%d/%m/%Y")
@@ -120,22 +126,29 @@ class CalendarPanel(wx.Panel):
                     reoccur = event.get('rrule').to_ical().decode('utf-8')
                     startR = None
                     nTimes = int(re.search("\d+", reoccur).group())
-                    for i in range(0, nTimes - 1):
+                    if re.search("count=", reoccur, re.IGNORECASE):
+                        for i in range(0, nTimes - 1):
+                            rule = rrule.rrulestr(reoccur, dtstart=event.get('dtstart').dt)
+                            if i == 0:
+                                startR = rule.after(event.get('dtstart').dt)
+                            else:
+                                startR = rule.after(startR)
+                            if startR is not None:
+                                start_date = startR.strftime("%d/%m/%Y")
+                                start_hour = startR.strftime("%H:%M")
+                                key_events[startR] = (evName, start_date, start_hour, str(delta.hours))
+                    elif re.search("until", reoccur, re.IGNORECASE):
                         rule = rrule.rrulestr(reoccur, dtstart=event.get('dtstart').dt)
-                        if i == 0:
-                            startR = rule.after(event.get('dtstart').dt)
-                        else:
+                        ends = reoccur.split(";UNTIL=")
+                        date_end_index = ends[1].find(";")
+                        until_string = ends[1][:date_end_index]
+                        _until = vDDDTypes.from_ical(until_string)
+                        startR = rule.after(event.get('dtstart').dt)
+                        while startR is not None and startR <= _until:
+                            start_date = startR.strftime("%d/%m/%Y")
+                            start_hour = startR.strftime("%H:%M")
+                            key_events[startR] = (evName, start_date, start_hour, str(delta.hours))
                             startR = rule.after(startR)
-
-                        start_date = startR.strftime("%d/%m/%Y")
-                        start_hour = startR.strftime("%H:%M")
-                        key_events[startR] = (evName, start_date, start_hour, str(delta.hours))
-                else:
-                    evName = str(event.get('summary'))
-                    start_date = event.get('dtstart').dt.strftime("%d/%m/%Y")
-                    start_hour = event.get('dtstart').dt.strftime("%H:%M")
-                    delta = relativedelta(event.get('dtend').dt, event.get('dtstart').dt)
-                    key_events[event.get('dtstart').dt] = (evName, start_date, start_hour, str(delta.hours))
             for i in sorted(key_events):
                 for j in range(len(key_events[i])):
                     if j == 0:
