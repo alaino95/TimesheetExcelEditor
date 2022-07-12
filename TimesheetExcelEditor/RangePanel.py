@@ -77,11 +77,11 @@ class RangePanel(wx.Panel):
 
         saturdayBox = wx.BoxSizer(wx.HORIZONTAL)
         sLabel = wx.StaticText(self, label="Sabato")
-        fridayBox.Add(sLabel, proportion=0, flag=wx.ALIGN_TOP | wx.ALL ^ wx.TOP, border=10)
+        saturdayBox.Add(sLabel, proportion=0, flag=wx.ALIGN_TOP | wx.ALL ^ wx.TOP, border=10)
         self.saturdayHours = wx.TextCtrl(self)
         self.saturdayHours.SetHint("Num ore")
         self.saturdayHours.Bind(wx.EVT_CHAR, self.__handle_keypress)
-        fridayBox.Add(self.saturdayHours, proportion=0, flag=wx.ALL ^ wx.TOP, border=5)
+        saturdayBox.Add(self.saturdayHours, proportion=0, flag=wx.ALL ^ wx.TOP, border=5)
         vbox.Add(saturdayBox, proportion=0, flag=wx.ALL, border=5)
 
         self.SetSizer(vbox)
@@ -116,27 +116,27 @@ class RangePanel(wx.Panel):
                     saturday = self.saturdayHours.GetValue()
                 while rangeEnd >= rangeStart:
                     if monday is not None:
-                        if rangeStart.strftime("%A") == "Monday":
+                        if rangeStart.weekday() == 0:
                             d = rangeStart.strftime("%d/%m/%Y")
                             config.file.modify(activity, d, int(monday), float(multiplier))
                     if tuesday is not None:
-                        if rangeStart.strftime("%A") == "Tuesday":
+                        if rangeStart.weekday() == 1:
                             d = rangeStart.strftime("%d/%m/%Y")
                             config.file.modify(activity, d, int(tuesday), float(multiplier))
                     if wednesday is not None:
-                        if rangeStart.strftime("%A") == "Wednesday":
+                        if rangeStart.weekday() == 2:
                             d = rangeStart.strftime("%d/%m/%Y")
                             config.file.modify(activity, d, int(wednesday), float(multiplier))
                     if thursday is not None:
-                        if rangeStart.strftime("%A") == "Thursday":
+                        if rangeStart.weekday() == 3:
                             d = rangeStart.strftime("%d/%m/%Y")
                             config.file.modify(activity, d, int(thursday), float(multiplier))
                     if friday is not None:
-                        if rangeStart.strftime("%A") == "Friday":
+                        if rangeStart.weekday() == 4:
                             d = rangeStart.strftime("%d/%m/%Y")
                             config.file.modify(activity, d, int(friday), float(multiplier))
                     if saturday is not None:
-                        if rangeStart.strftime("%A") == "Saturday":
+                        if rangeStart.weekday() == 5:
                             d = rangeStart.strftime("%d/%m/%Y")
                             config.file.modify(activity, d, int(saturday), float(multiplier))
                     rangeStart = rangeStart + timedelta(days=1)
